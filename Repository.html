@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Repository — Sivakumar</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --purple: #4B4E9B;
+      --purple-dark: #3a3d80;
+      --purple-light: #5d60b0;
+      --purple-pale: rgba(75, 78, 155, 0.10);
+      --green: #3CC68A;
+      --green-dark: #2EBD7E;
+      --green-pale: rgba(60, 198, 138, 0.12);
+      --white: #ffffff;
+      --off-white: #f5f7ff;
+      --text-dark: #1a1a2e;
+      --text-mid: #4a4a6a;
+      --text-light: #8888aa;
+      --border: rgba(75, 78, 155, 0.15);
+      --bg: #f5f7ff;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text-dark);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* NAV */
+    nav {
+      background: white;
+      padding: 0 60px;
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 20px rgba(75,78,155,0.08);
+      position: sticky;
+      top: 0;
+      z-index: 200;
+    }
+    .nav-logo {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 800;
+      font-size: 25px;
+      color: var(--purple);
+    }
+    .nav-links { display: flex; gap: 28px; list-style: none; }
+    .nav-links a {
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-mid);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--green-dark); }
+    .nav-links a.active {
+      color: var(--green-dark);
+      border-bottom: 2px solid var(--green-dark);
+      padding-bottom: 2px;
+    }
+    .nav-cta {
+      background: transparent;
+      border: 2px solid var(--purple);
+      color: var(--purple);
+      padding: 8px 20px;
+      border-radius: 50px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .nav-cta:hover { background: var(--purple); color: white; }
+
+    /* HERO */
+    .hero {
+      background: var(--purple);
+      position: relative;
+      padding: 64px 60px 110px;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      right: -80px; top: -80px;
+      width: 480px; height: 480px;
+      background: radial-gradient(circle, rgba(60,198,138,0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-wave {
+      position: absolute;
+      bottom: -2px; left: 0;
+      width: 100%;
+      line-height: 0;
+    }
+    .hero-eyebrow {
+      font-family: 'Poppins', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 20px;
+      opacity: 0;
+      animation: fadeUp 0.5s ease forwards 0.1s;
+    }
+    .hero-title-pill {
+      display: inline-block;
+      background: white;
+      border-radius: 50px;
+      padding: 13px 30px;
+      margin-bottom: 18px;
+      opacity: 0;
+      animation: fadeUp 0.5s ease forwards 0.2s;
+    }
+    .hero-title-pill h1 {
+      font-family: 'Poppins', sans-serif;
+      font-size: clamp(20px, 2.8vw, 32px);
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+    .hero-sub-pill {
+      display: inline-block;
+      background: white;
+      border-radius: 20px;
+      padding: 16px 26px;
+      margin-bottom: 28px;
+      opacity: 0;
+      animation: fadeUp 0.5s ease forwards 0.3s;
+    }
+    .hero-sub-pill p {
+      font-family: 'Poppins', sans-serif;
+      font-size: clamp(13px, 1.4vw, 16px);
+      font-weight: 500;
+      color: var(--green-dark);
+      line-height: 1.5;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: white;
+      padding: 10px 22px;
+      border-radius: 50px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      opacity: 0;
+      animation: fadeUp 0.5s ease forwards 0.4s;
+    }
+    .hero-badge strong { color: var(--green); }
+
+    /* TOOLBAR */
+    .toolbar {
+      background: white;
+      padding: 18px 60px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      border-bottom: 2px solid var(--border);
+      position: sticky;
+      top: 70px;
+      z-index: 150;
+      box-shadow: 0 4px 20px rgba(75,78,155,0.06);
+    }
+    .search-wrap { position: relative; flex: 1; min-width: 200px; max-width: 300px; }
+    .search-icon {
+      position: absolute;
+      left: 13px; top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-light);
+      font-size: 14px;
+      pointer-events: none;
+    }
+    .search-input {
+      width: 100%;
+      background: var(--off-white);
+      border: 1.5px solid var(--border);
+      border-radius: 50px;
+      padding: 9px 14px 9px 38px;
+      color: var(--text-dark);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .search-input::placeholder { color: var(--text-light); }
+    .search-input:focus { border-color: var(--purple); }
+    .filters { display: flex; gap: 7px; flex-wrap: wrap; }
+    .filter-btn {
+      padding: 7px 17px;
+      border-radius: 50px;
+      border: 1.5px solid var(--border);
+      background: transparent;
+      color: var(--text-mid);
+      font-family: 'Poppins', sans-serif;
+      font-size: 11px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .filter-btn:hover { border-color: var(--purple); color: var(--purple); }
+    .filter-btn.active { background: var(--purple); border-color: var(--purple); color: white; }
+    .doc-count {
+      margin-left: auto;
+      background: var(--green-pale);
+      border: 1.5px solid rgba(60,198,138,0.28);
+      color: var(--green-dark);
+      padding: 6px 16px;
+      border-radius: 50px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    /* MAIN */
+    main { padding: 44px 60px 80px; max-width: 1200px; }
+
+    /* SECTION */
+    .section-heading {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 22px;
+      margin-top: 48px;
+    }
+    .section-heading:first-child { margin-top: 0; }
+    .section-pill {
+      background: var(--purple);
+      color: white;
+      font-family: 'Poppins', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 5px 16px;
+      border-radius: 50px;
+      white-space: nowrap;
+    }
+    .section-line {
+      flex: 1;
+      height: 2px;
+      background: linear-gradient(to right, rgba(75,78,155,0.18), transparent);
+      border-radius: 2px;
+    }
+    .section-count {
+      background: var(--green-pale);
+      color: var(--green-dark);
+      font-family: 'Poppins', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 50px;
+    }
+
+    /* GRID */
+    .doc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 18px; }
+
+    /* CARD */
+    .doc-card {
+      background: white;
+      border: 2px solid transparent;
+      border-radius: 20px;
+      padding: 24px;
+      cursor: default;
+      transition: all 0.25s;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 18px rgba(75,78,155,0.07);
+      opacity: 0;
+      animation: fadeUp 0.5s ease forwards;
+    }
+    .doc-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--purple), var(--green));
+      border-radius: 20px 20px 0 0;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s ease;
+    }
+    .doc-card:hover {
+      border-color: rgba(75,78,155,0.18);
+      transform: translateY(-4px);
+      box-shadow: 0 14px 36px rgba(75,78,155,0.13);
+    }
+    .doc-card:hover::before { transform: scaleX(1); }
+
+    .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; }
+    .doc-type-icon {
+      width: 44px; height: 44px;
+      border-radius: 12px;
+      background: var(--purple-pale);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+    }
+    .doc-year {
+      background: var(--off-white);
+      border: 1.5px solid var(--border);
+      color: var(--text-mid);
+      font-family: 'Poppins', sans-serif;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 50px;
+    }
+    .doc-title {
+      font-family: 'Poppins', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1.4;
+      color: var(--text-dark);
+      margin-bottom: 8px;
+    }
+    .doc-desc {
+      font-size: 13px;
+      color: var(--text-mid);
+      line-height: 1.65;
+      margin-bottom: 16px;
+    }
+    .doc-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+    .tag {
+      font-family: 'Poppins', sans-serif;
+      font-size: 10px;
+      font-weight: 500;
+      padding: 4px 11px;
+      border-radius: 50px;
+      background: var(--green-pale);
+      color: var(--green-dark);
+      border: 1px solid rgba(60,198,138,0.22);
+    }
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 13px;
+      border-top: 1.5px solid var(--border);
+    }
+    .doc-meta { font-family: 'Poppins', sans-serif; font-size: 11px; color: var(--text-light); }
+    .card-action { display: flex; gap: 7px; }
+    .btn-icon {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border);
+      background: transparent;
+      color: var(--text-mid);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+    .btn-icon:hover { background: var(--purple); border-color: var(--purple); color: white; }
+    .btn-icon.danger:hover { background: #e74c3c; border-color: #e74c3c; color: white; }
+
+    /* ADD CARD */
+    .add-card {
+      background: white;
+      border: 2.5px dashed rgba(75,78,155,0.22);
+      border-radius: 20px;
+      padding: 24px;
+      cursor: pointer;
+      transition: all 0.25s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 11px;
+      min-height: 170px;
+      color: var(--text-light);
+      font-family: 'Poppins', sans-serif;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .add-card:hover {
+      border-color: var(--green-dark);
+      color: var(--green-dark);
+      background: var(--green-pale);
+      transform: translateY(-3px);
+    }
+    .add-icon {
+      width: 46px; height: 46px;
+      border-radius: 50%;
+      border: 2px solid currentColor;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px;
+    }
+
+    /* MODAL */
+    .modal-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(27,27,70,0.55);
+      backdrop-filter: blur(7px);
+      z-index: 500;
+      align-items: center; justify-content: center;
+      padding: 24px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: white;
+      border-radius: 24px;
+      padding: 40px;
+      width: 100%; max-width: 520px;
+      position: relative;
+      animation: scaleIn 0.25s ease;
+      box-shadow: 0 24px 60px rgba(75,78,155,0.18);
+    }
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.95) translateY(10px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .modal-header { display: flex; align-items: center; gap: 14px; margin-bottom: 28px; }
+    .modal-icon {
+      width: 46px; height: 46px;
+      border-radius: 14px;
+      background: var(--purple-pale);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+    }
+    .modal-title { font-family: 'Poppins', sans-serif; font-size: 20px; font-weight: 700; color: var(--text-dark); }
+    .modal-sub { font-size: 13px; color: var(--text-light); margin-top: 3px; }
+    .form-group { margin-bottom: 16px; }
+    .form-label {
+      display: block;
+      font-family: 'Poppins', sans-serif;
+      font-size: 11px; font-weight: 600;
+      color: var(--text-mid);
+      margin-bottom: 7px;
+      letter-spacing: 0.04em;
+    }
+    .form-input, .form-textarea, .form-select {
+      width: 100%;
+      background: var(--off-white);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 11px 14px;
+      color: var(--text-dark);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .form-input:focus, .form-textarea:focus, .form-select:focus {
+      border-color: var(--purple);
+      box-shadow: 0 0 0 3px rgba(75,78,155,0.09);
+    }
+    .form-textarea { resize: vertical; min-height: 78px; }
+    .form-select { appearance: none; cursor: pointer; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .modal-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 26px; }
+    .btn-cancel {
+      padding: 10px 24px;
+      border-radius: 50px;
+      border: 1.5px solid var(--border);
+      background: transparent;
+      color: var(--text-mid);
+      font-family: 'Poppins', sans-serif;
+      font-size: 13px; font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-cancel:hover { border-color: var(--purple); color: var(--purple); }
+    .btn-submit {
+      padding: 10px 26px;
+      border-radius: 50px;
+      border: none;
+      background: linear-gradient(135deg, var(--purple), var(--purple-light));
+      color: white;
+      font-family: 'Poppins', sans-serif;
+      font-size: 13px; font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 4px 14px rgba(75,78,155,0.28);
+    }
+    .btn-submit:hover {
+      background: linear-gradient(135deg, var(--green-dark), var(--green));
+      box-shadow: 0 4px 14px rgba(60,198,138,0.32);
+      transform: translateY(-1px);
+    }
+    .modal-close {
+      position: absolute; top: 16px; right: 16px;
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border);
+      background: var(--off-white);
+      color: var(--text-mid);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 14px;
+      transition: all 0.2s;
+    }
+    .modal-close:hover { background: var(--purple); color: white; border-color: var(--purple); }
+
+    /* TOAST */
+    .toast {
+      position: fixed; bottom: 28px; right: 28px;
+      background: var(--purple);
+      color: white;
+      padding: 13px 22px;
+      border-radius: 50px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 13px; font-weight: 500;
+      z-index: 999;
+      transform: translateY(20px); opacity: 0;
+      transition: all 0.3s;
+      box-shadow: 0 8px 24px rgba(75,78,155,0.3);
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+
+    .empty-msg {
+      grid-column: 1/-1;
+      text-align: center;
+      padding: 48px;
+      color: var(--text-light);
+      font-family: 'Poppins', sans-serif;
+      font-size: 13px;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 768px) {
+      nav { padding: 0 20px; }
+      .nav-links { display: none; }
+      .hero { padding: 44px 24px 100px; }
+      .toolbar { padding: 14px 20px; top: 70px; }
+      main { padding: 28px 20px 60px; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<section class="preloader">
+            <div class="spinner">
+                <span class="spinner-rotate"></span>    
+            </div>
+        </section>
+
+<nav class="navbar navbar-expand-lg">
+  <div class="nav-logo"><a href="index.html" class="navbar-brand mx-auto mx-lg-0">SK</a></div>
+  <ul class="nav-links">
+	<li><a href="index.html">Home</a></li>
+	<li><a href="Repository.html" class="active">Repository</a></li>
+	<li><a href="Gallery.html">Gallery</a></li>
+    <li><a href="file:///C:/Users/31905/Downloads/Sivakumar%20Profile/index.html#section_6">Contact</a></li>
+  </ul>
+</nav>
+
+<div class="hero">
+  <p class="hero-eyebrow">📚 Archive</p>
+  <div class="hero-title-pill">
+    <h1>Personal Repository</h1>
+  </div>
+  <br/>
+  <div class="hero-sub-pill">
+    <p>Library &amp; Information Science<br/>Documents, Publications &amp; Research</p>
+  </div>
+  <br/>
+  <div class="hero-badge">
+    All your work in one place &nbsp;·&nbsp; <strong id="heroCount">0</strong> documents
+  </div>
+  <div class="hero-wave">
+    <svg viewBox="0 0 1440 80" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+      <path d="M0,40 C360,80 1080,0 1440,40 L1440,80 L0,80 Z" fill="#f5f7ff"/>
+    </svg>
+  </div>
+</div>
+<div class="toolbar">
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input class="search-input" id="searchInput" type="text" placeholder="Search documents…" oninput="filterDocs()"/>
+  </div>
+  <div class="filters">
+    <button class="filter-btn active" onclick="setFilter('all',this)">All</button>
+    <button class="filter-btn" onclick="setFilter('publication',this)">Publications</button>
+    <button class="filter-btn" onclick="setFilter('report',this)">Reports</button>
+    <button class="filter-btn" onclick="setFilter('note',this)">Notes</button>
+    <button class="filter-btn" onclick="setFilter('thesis',this)">Thesis</button>
+    <button class="filter-btn" onclick="setFilter('other',this)">Other</button>
+  </div>
+  <span class="doc-count" id="docCount">0 documents</span>
+</div>
+
+<main id="mainContent"></main>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-header">
+      <div class="modal-icon">📄</div>
+      <div>
+        <div class="modal-title">Add Document</div>
+        <div class="modal-sub">New entry to your repository</div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Title *</label>
+      <input class="form-input" id="inputTitle" type="text" placeholder="e.g. Digital Library Management…"/>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Description</label>
+      <textarea class="form-textarea" id="inputDesc" placeholder="Brief abstract or summary…"></textarea>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Type</label>
+        <select class="form-select" id="inputType">
+          <option value="publication">Publication</option>
+          <option value="report">Report</option>
+          <option value="note">Note</option>
+          <option value="thesis">Thesis</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Year</label>
+        <input class="form-input" id="inputYear" type="number" placeholder="2025" min="1900" max="2099"/>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Tags (comma-separated)</label>
+      <input class="form-input" id="inputTags" type="text" placeholder="e.g. LIS, Research, Digital"/>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">File Size</label>
+        <input class="form-input" id="inputSize" type="text" placeholder="e.g. 2.4 MB"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Link / URL</label>
+        <input class="form-input" id="inputLink" type="url" placeholder="https://…"/>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-submit" onclick="addDocument()">Add Document ✓</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const typeIcons = { publication:'📄', report:'📊', note:'📝', thesis:'🎓', other:'📁' };
+  const typeLabels = { publication:'Publications', thesis:'Thesis & Dissertations', report:'Reports', note:'Notes', other:'Other Documents' };
+
+  const STORAGE_KEY = 'sk_repository_docs';
+
+  const defaultDocs = [
+    { id:1, title:"Digital Library Management in Academic Institutions", desc:"A study on effective strategies for managing digital repositories in higher education libraries.", type:"publication", year:2024, tags:["Digital Library","LIS","Management"], size:"2.8 MB", link:"#" },
+    { id:2, title:"Information Retrieval Systems: A Comparative Study", desc:"Comparative analysis of modern information retrieval systems and their efficiency in academic settings.", type:"report", year:2023, tags:["IR Systems","Research","Comparative"], size:"4.2 MB", link:"#" },
+    { id:3, title:"Knowledge Organization in Special Libraries", desc:"Notes and observations on classification schemes and cataloguing practices in special library environments.", type:"note", year:2024, tags:["Cataloguing","Classification","LIS"], size:"1.1 MB", link:"#" },
+    { id:4, title:"Role of AI in Modern Library Services", desc:"Exploring how artificial intelligence is transforming reference services, cataloguing, and user experience in libraries.", type:"thesis", year:2022, tags:["AI","Library Services","Technology"], size:"9.6 MB", link:"#" },
+    { id:5, title:"Open Access Publishing: Trends & Impact", desc:"An investigation into the growth of open access journals and their influence on scholarly communication.", type:"publication", year:2025, tags:["Open Access","Publishing","Scholarly"], size:"3.3 MB", link:"#" }
+  ];
+
+  function loadDocs() {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      return saved ? JSON.parse(saved) : defaultDocs;
+    } catch(e) { return defaultDocs; }
+  }
+
+  function saveDocs() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(docs));
+    } catch(e) { console.warn('localStorage error:', e); }
+  }
+
+  let docs = loadDocs();
+  let activeFilter = 'all';
+
+  function render() {
+    const query = document.getElementById('searchInput').value.toLowerCase();
+    const main = document.getElementById('mainContent');
+    const filtered = docs.filter(d => {
+      const mf = activeFilter === 'all' || d.type === activeFilter;
+      const ms = !query || d.title.toLowerCase().includes(query) || d.desc.toLowerCase().includes(query) || d.tags.some(t => t.toLowerCase().includes(query));
+      return mf && ms;
+    });
+
+    document.getElementById('docCount').textContent = `${filtered.length} document${filtered.length !== 1 ? 's' : ''}`;
+    document.getElementById('heroCount').textContent = docs.length;
+
+    const types = ['publication','thesis','report','note','other'];
+    let html = '';
+
+    types.forEach(type => {
+      if (activeFilter !== 'all' && type !== activeFilter) return;
+      const group = filtered.filter(d => d.type === type);
+      if (group.length === 0 && activeFilter === 'all') return;
+
+      html += `<div class="section-block">
+        <div class="section-heading">
+          <span class="section-pill">${typeLabels[type]}</span>
+          <span class="section-line"></span>
+          <span class="section-count">${group.length}</span>
+        </div>
+        <div class="doc-grid">`;
+
+      group.forEach((doc, i) => {
+        const linkBtn = doc.link && doc.link !== '#'
+          ? `<a class="btn-icon" href="${doc.link}" target="_blank" rel="noopener" title="Open PDF">↗</a>`
+          : '';
+        html += `<div class="doc-card" style="animation-delay:${i * 0.07}s">
+          <div class="card-top">
+            <div class="doc-type-icon">${typeIcons[doc.type]}</div>
+            <span class="doc-year">${doc.year}</span>
+          </div>
+          <div class="doc-title">${doc.title}</div>
+          <div class="doc-desc">${doc.desc}</div>
+          <div class="doc-tags">${doc.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
+          <div class="card-footer">
+            <span class="doc-meta">${doc.size || '—'}</span>
+            <div class="card-action">
+              ${linkBtn}
+              <button class="btn-icon danger" onclick="deleteDoc(${doc.id})" title="Remove">✕</button>
+            </div>
+          </div>
+        </div>`;
+      });
+
+      html += `<button class="add-card" onclick="openModal('${type}')">
+        <span class="add-icon">+</span>
+        Add ${typeLabels[type].replace(/s$/, '').replace(' & Dissertations', '')}
+      </button>`;
+      html += `</div></div>`;
+    });
+
+    if (filtered.length === 0) {
+      html = `<p class="empty-msg">No documents found. Try a different search.</p>`;
+    }
+    main.innerHTML = html;
+  }
+
+  function setFilter(type, btn) {
+    activeFilter = type;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    render();
+  }
+
+  function filterDocs() { render(); }
+
+  let modalType = 'publication';
+
+  function openModal(type) {
+    modalType = type || 'publication';
+    document.getElementById('inputType').value = modalType;
+    document.getElementById('inputYear').value = new Date().getFullYear();
+    document.getElementById('modalOverlay').classList.add('open');
+  }
+
+  function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('open');
+    ['inputTitle','inputDesc','inputTags','inputSize','inputLink'].forEach(id => {
+      document.getElementById(id).value = '';
+    });
+  }
+
+  function addDocument() {
+    const title = document.getElementById('inputTitle').value.trim();
+    if (!title) { showToast('⚠ Please enter a title.'); return; }
+
+    const tags = document.getElementById('inputTags').value
+      .split(',').map(t => t.trim()).filter(Boolean);
+
+    const newDoc = {
+      id: Date.now(),
+      title,
+      desc: document.getElementById('inputDesc').value.trim(),
+      type: document.getElementById('inputType').value,
+      year: parseInt(document.getElementById('inputYear').value) || new Date().getFullYear(),
+      tags,
+      size: document.getElementById('inputSize').value.trim(),
+      link: document.getElementById('inputLink').value.trim()
+    };
+
+    docs.unshift(newDoc);
+    saveDocs();         // ← persist to localStorage
+    closeModal();
+    render();
+    showToast('✓ Document saved!');
+  }
+
+  function deleteDoc(id) {
+    if (!confirm('Remove this document from the repository?')) return;
+    docs = docs.filter(d => d.id !== id);
+    saveDocs();         // ← persist deletion
+    render();
+    showToast('Document removed.');
+  }
+
+  document.getElementById('modalOverlay').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2800);
+  }
+
+  render();
+</script>
+</body>
+</html>

@@ -621,6 +621,28 @@ body.admin .blog-add-btn{display:inline-flex !important;}
 .blog-del-btn:hover{background:#ef4444;color:var(--wh);}
 body.admin .blog-del-btn{display:flex;}
 .blog-card{position:relative;}
+
+/* ── Blog & Repo  EDIT / DOWNLOAD buttons (admin only) ── */
+.blog-edit-btn{
+  display:none;position:absolute;top:10px;left:10px;
+  width:28px;height:28px;border-radius:50%;
+  background:rgba(16,110,190,.14);color:var(--bl);border:none;
+  font-size:.82rem;cursor:pointer;transition:var(--tr);
+  align-items:center;justify-content:center;z-index:6;
+}
+.blog-edit-btn:hover{background:var(--bl);color:var(--wh);}
+body.admin .blog-edit-btn{display:flex;}
+.ib.edit{background:rgba(0,171,228,.12);color:var(--bb);display:none;}
+.ib.edit:hover{background:var(--bb);color:var(--wh);}
+body.admin .ib.edit{display:flex;}
+.dl-btn{
+  display:none;padding:9px 18px;border-radius:var(--r999);gap:6px;
+  background:linear-gradient(135deg,#0a2540,var(--nm));
+  color:var(--wh);font-family:var(--fb);font-size:.78rem;font-weight:700;
+  cursor:pointer;border:none;transition:var(--tr);align-items:center;
+}
+body.admin .dl-btn{display:inline-flex;}
+.dl-btn:hover{transform:translateY(-1px);box-shadow:var(--s2);}
 </style>
 </head>
 <body>
@@ -1019,6 +1041,9 @@ body.admin .blog-del-btn{display:flex;}
         <h2 class="sec-h" style="margin-bottom:0;">Blog Posts</h2>
       </div>
       <button class="blog-add-btn" onclick="openAddBlog()" id="blogAddBtn" style="display:none;">+ Add New Post</button>
+      <button class="dl-btn" onclick="downloadUpdatedHTML()" title="Download updated HTML for GitHub">
+        &#8659; Download Updated HTML
+      </button>
     </div>
     <div class="blog-grid" id="blogGridFull"></div>
   </div>
@@ -1041,6 +1066,9 @@ body.admin .blog-del-btn{display:flex;}
       <button class="fb" onclick="sRF('other',this)">Other</button>
     </div>
     <span class="c-pill" id="rCnt">0 documents</span>
+    <button class="dl-btn" onclick="downloadUpdatedHTML()" title="Download updated HTML for GitHub">
+      &#8659; Save to GitHub
+    </button>
   </div>
   <div class="rp-main" id="rp-main"></div>
 </div>
@@ -1511,7 +1539,8 @@ function verifyAdmin(){
     document.body.classList.add('admin');cMo('moAdmin');
     const btn=document.getElementById('blogAddBtn');
     if(btn)btn.style.display='inline-flex';
-    toast('✓ Admin mode activated — delete & add options now visible');
+    /* show all admin-only buttons (dl-btn etc via CSS body.admin) */
+    toast('✓ Admin mode activated — edit, add, delete & download buttons now visible');
   }else{document.getElementById('adminErr').textContent='❌ Incorrect password. Try again.';}
 }
 function logoutAdmin(){
@@ -1553,31 +1582,31 @@ Using SPSS, chi-square tests confirmed statistically significant links between a
 Recommendations: embed library orientations into curricula, create short-form database tutorials, and run regular information literacy workshops.`,tags:["Research","DIL","SPSS"]},
 ];
 
-/* BLOG localStorage */
-const BK='sk_blog_v1';
-function loadBlogPosts(){
-  try{const s=localStorage.getItem(BK);return s?[...BLOG,...JSON.parse(s)]:[...BLOG];}
+/* BLOG — unified localStorage (persists add/edit/delete + survives refresh) */
+const BK='sk_blog_v2';
+function lBlog(){
+  try{const s=localStorage.getItem(BK);return s?JSON.parse(s):[...BLOG];}
   catch(e){return[...BLOG];}
 }
-function saveBlogPosts(custom){
-  try{localStorage.setItem(BK,JSON.stringify(custom));}catch(e){}
+function sBlog(data){
+  try{localStorage.setItem(BK,JSON.stringify(data));}catch(e){}
+  allBlogs=data;
 }
-let customBlogs=[];
-try{const s=localStorage.getItem(BK);customBlogs=s?JSON.parse(s):[];}catch(e){}
-function getAllBlogs(){return[...BLOG,...customBlogs];}
+let allBlogs=lBlog();
+function getAllBlogs(){return allBlogs;}
 
 function rBlogCards(cId,limit){
-  const all=getAllBlogs();
-  const data=limit?all.slice(0,limit):all;
+  const data=limit?allBlogs.slice(0,limit):allBlogs;
   document.getElementById(cId).innerHTML=data.map(p=>`
     <div class="blog-card" onclick="openBlog(${p.id})">
-      <button class="blog-del-btn" onclick="delBlog(event,${p.id})" title="Delete Post">&#10005;</button>
+      <button class="blog-del-btn"  onclick="delBlog(event,${p.id})"  title="Delete Post">&#10005;</button>
+      <button class="blog-edit-btn" onclick="editBlog(event,${p.id})" title="Edit Post">&#9998;</button>
       <div class="blog-bar"></div>
       <div class="blog-body">
         <div class="blog-cat">${p.cat}</div>
         <div class="blog-title">${p.title}</div>
         <div class="blog-prev">${p.prev}</div>
-        <div class="blog-tags">${p.tags.map(t=>`<span class="blog-tag">${t}</span>`).join('')}</div>
+        <div class="blog-tags">${(p.tags||[]).map(t=>`<span class="blog-tag">${t}</span>`).join('')}</div>
       </div>
       <div class="blog-foot">
         <span class="blog-date">📅 ${p.date}</span>
@@ -1588,38 +1617,83 @@ function rBlogCards(cId,limit){
 function delBlog(e,id){
   e.stopPropagation();
   if(!confirm('Delete this blog post?'))return;
-  customBlogs=customBlogs.filter(b=>b.id!==id);
-  saveBlogPosts(customBlogs);
+  sBlog(allBlogs.filter(b=>b.id!==id));
   rBlogCards('blogGrid',4);
   rBlogCards('blogGridFull');
   toast('Blog post deleted.');
 }
-function openAddBlog(){oMo('moBlogAdd');}
+let _editBlogId=null;
+
+function openAddBlog(){
+  _editBlogId=null;
+  ['bT','bPv','bBd','bTg'].forEach(id=>document.getElementById(id).value='');
+  const bD=document.getElementById('bD');
+  if(bD)bD.value=new Date().toISOString().split('T')[0];
+  const hEl=document.querySelector('#moBlogAdd .mh h3');
+  const bEl=document.querySelector('#moBlogAdd .btn-s');
+  if(hEl)hEl.textContent='Add Blog Post';
+  if(bEl)bEl.textContent='Publish Post ✓';
+  oMo('moBlogAdd');
+}
+
+function editBlog(e,id){
+  e.stopPropagation();
+  const p=allBlogs.find(x=>x.id===id);
+  if(!p)return;
+  _editBlogId=id;
+  document.getElementById('bT').value  = p.title||'';
+  document.getElementById('bC').value  = p.cat||'Databases';
+  document.getElementById('bPv').value = p.prev||'';
+  document.getElementById('bBd').value = p.body||'';
+  document.getElementById('bTg').value = (p.tags||[]).join(', ');
+  const bD=document.getElementById('bD');
+  if(bD)bD.value=new Date().toISOString().split('T')[0];
+  const hEl=document.querySelector('#moBlogAdd .mh h3');
+  const bEl=document.querySelector('#moBlogAdd .btn-s');
+  if(hEl)hEl.textContent='Edit Blog Post';
+  if(bEl)bEl.textContent='Save Changes ✓';
+  oMo('moBlogAdd');
+}
+
 function saveBlogPost(){
   const title=document.getElementById('bT').value.trim();
-  const prev=document.getElementById('bPv').value.trim();
-  const body=document.getElementById('bBd').value.trim();
+  const prev =document.getElementById('bPv').value.trim();
+  const body =document.getElementById('bBd').value.trim();
   if(!title||!prev||!body){toast('⚠ Please fill Title, Preview and Article.');return;}
-  const tags=document.getElementById('bTg').value.split(',').map(t=>t.trim()).filter(Boolean);
+  const tags   =document.getElementById('bTg').value.split(',').map(t=>t.trim()).filter(Boolean);
   const dateVal=document.getElementById('bD').value;
-  const dateStr=dateVal?new Date(dateVal).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'}):new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
-  const newPost={
-    id:Date.now(),
-    title,
-    date:dateStr,
-    cat:document.getElementById('bC').value,
-    prev,body,tags,
-    custom:true
-  };
-  customBlogs.unshift(newPost);
-  saveBlogPosts(customBlogs);
+  const dateStr=dateVal
+    ?new Date(dateVal).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'})
+    :new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
+  const cat=document.getElementById('bC').value;
+
+  if(_editBlogId!==null){
+    /* ── EDIT mode ── */
+    const idx=allBlogs.findIndex(b=>b.id===_editBlogId);
+    if(idx!==-1){
+      allBlogs[idx]={...allBlogs[idx],title,date:dateStr,cat,prev,body,tags};
+      sBlog([...allBlogs]);
+      toast('✓ Blog post updated!');
+    }
+    _editBlogId=null;
+  }else{
+    /* ── ADD mode ── */
+    sBlog([{id:Date.now(),title,date:dateStr,cat,prev,body,tags},...allBlogs]);
+    toast('✓ Blog post published!');
+  }
+
+  /* Reset modal */
+  const hEl=document.querySelector('#moBlogAdd .mh h3');
+  const bEl=document.querySelector('#moBlogAdd .btn-s');
+  if(hEl)hEl.textContent='Add Blog Post';
+  if(bEl)bEl.textContent='Publish Post ✓';
   cMo('moBlogAdd');
   rBlogCards('blogGrid',4);
   rBlogCards('blogGridFull');
-  toast('✓ Blog post published!');
   ['bT','bPv','bBd','bTg'].forEach(id=>document.getElementById(id).value='');
 }
 function rBlogFull(){
+  _editBlogId=null;
   rBlogCards('blogGridFull');
   const btn=document.getElementById('blogAddBtn');
   if(btn&&document.body.classList.contains('admin'))btn.style.display='inline-flex';
@@ -1675,7 +1749,7 @@ function rRepo(){
         <div class="d-ds">${d.desc}</div>
         <div class="d-tgs">${(d.tags||[]).map(t=>`<span class="d-tg">${t}</span>`).join('')}</div>
         <div class="dc-ft"><span class="d-mt">${d.size||'—'}</span>
-        <div class="dc-acts">${lnk}<button class="ib del" onclick="dDoc(${d.id})" title="Delete">✕</button></div></div>
+        <div class="dc-acts">${lnk}<button class="ib edit" onclick="editDoc(${d.id})" title="Edit">&#9998;</button><button class="ib del" onclick="dDoc(${d.id})" title="Delete">✕</button></div></div>
       </div>`;
     });
     html+=`<button class="add-card" onclick="oRepoMo('${type}')"><div class="add-ic">+</div>Add ${TL[type].replace(/s$/,'').replace(' & Dissertations','')}</button></div></div>`;
@@ -1684,12 +1758,77 @@ function rRepo(){
   document.getElementById('rp-main').innerHTML=html;
 }
 function sRF(f,btn){rFil=f;document.querySelectorAll('#page-repo .fb').forEach(b=>b.classList.remove('on'));btn.classList.add('on');rRepo();}
-function oRepoMo(t){rMType=t||'publication';document.getElementById('rTy').value=rMType;document.getElementById('rY').value=new Date().getFullYear();oMo('moRepo');}
+/* oRepoMo now defined above with edit support */
+let _editDocId=null;
+
+function editDoc(id){
+  const d=docs.find(x=>x.id===id);
+  if(!d)return;
+  _editDocId=id;
+  document.getElementById('rT').value  = d.title||'';
+  document.getElementById('rD').value  = d.desc||'';
+  document.getElementById('rTy').value = d.type||'publication';
+  document.getElementById('rY').value  = d.year||new Date().getFullYear();
+  document.getElementById('rTg').value = (d.tags||[]).join(', ');
+  document.getElementById('rSz').value = d.size||'';
+  document.getElementById('rLk').value = d.link||'';
+  const hEl=document.querySelector('#moRepo .mh h3');
+  const bEl=document.querySelector('#moRepo .btn-s');
+  if(hEl)hEl.textContent='Edit Document';
+  if(bEl)bEl.textContent='Save Changes ✓';
+  oMo('moRepo');
+}
+
+function oRepoMo(type){
+  _editDocId=null;
+  rMType=type||'publication';
+  document.getElementById('rTy').value=rMType;
+  document.getElementById('rY').value=new Date().getFullYear();
+  ['rT','rD','rTg','rSz','rLk'].forEach(id=>document.getElementById(id).value='');
+  const hEl=document.querySelector('#moRepo .mh h3');
+  const bEl=document.querySelector('#moRepo .btn-s');
+  if(hEl)hEl.textContent='Add Document';
+  if(bEl)bEl.textContent='Add Document ✓';
+  oMo('moRepo');
+}
+
 function addDoc(){
-  const title=document.getElementById('rT').value.trim();if(!title){toast('⚠ Please enter a title.');return;}
-  const tags=document.getElementById('rTg').value.split(',').map(t=>t.trim()).filter(Boolean);
-  docs.unshift({id:Date.now(),title,desc:document.getElementById('rD').value.trim(),type:document.getElementById('rTy').value,year:parseInt(document.getElementById('rY').value)||new Date().getFullYear(),tags,size:document.getElementById('rSz').value.trim(),link:document.getElementById('rLk').value.trim()});
-  sDocs(docs);cMo('moRepo');rRepo();toast('✓ Document saved!');
+  const title=document.getElementById('rT').value.trim();
+  if(!title){toast('⚠ Please enter a title.');return;}
+  const tags =document.getElementById('rTg').value.split(',').map(t=>t.trim()).filter(Boolean);
+  const entry={
+    title,
+    desc: document.getElementById('rD').value.trim(),
+    type: document.getElementById('rTy').value,
+    year: parseInt(document.getElementById('rY').value)||new Date().getFullYear(),
+    tags,
+    size: document.getElementById('rSz').value.trim(),
+    link: document.getElementById('rLk').value.trim()
+  };
+
+  if(_editDocId!==null){
+    /* ── EDIT mode ── */
+    const idx=docs.findIndex(d=>d.id===_editDocId);
+    if(idx!==-1){
+      docs[idx]={...docs[idx],...entry};
+      sDocs(docs);
+      toast('✓ Document updated!');
+    }
+    _editDocId=null;
+  }else{
+    /* ── ADD mode ── */
+    docs.unshift({id:Date.now(),...entry});
+    sDocs(docs);
+    toast('✓ Document saved!');
+  }
+
+  /* Reset modal header */
+  const hEl=document.querySelector('#moRepo .mh h3');
+  const bEl=document.querySelector('#moRepo .btn-s');
+  if(hEl)hEl.textContent='Add Document';
+  if(bEl)bEl.textContent='Add Document ✓';
+  cMo('moRepo');
+  rRepo();
   ['rT','rD','rTg','rSz','rLk'].forEach(id=>document.getElementById(id).value='');
 }
 function dDoc(id){if(!confirm('Remove this document?'))return;docs=docs.filter(d=>d.id!==id);sDocs(docs);rRepo();toast('Document removed.');}
@@ -1776,6 +1915,86 @@ function addPhoto(){
   sPhotos(photos);cMo('moGal');rGal();toast('✓ Photo added!');
   ['gTi','gDe','gTg'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('gFl').value='';pendImg=null;document.getElementById('prevTh').style.display='none';
+}
+
+
+/* ── DOWNLOAD UPDATED HTML ──────────────────────────────────────────
+   Fetches the live HTML source, replaces BLOG + DD arrays with
+   current data from localStorage, downloads as index.html.
+   Upload that file to GitHub to publish your changes for everyone.
+─────────────────────────────────────────────────────────────────── */
+function _replaceJSArray(src, varName, newData){
+  /* Find const varName=[ ... ]; using balanced-bracket counting
+     so backtick strings with brackets inside don't break the search */
+  const marker  = 'const '+varName+'=[';
+  const startIdx= src.indexOf(marker);
+  if(startIdx===-1) return src;
+
+  let depth=0, inTick=false, inDQ=false, inSQ=false;
+  let i=startIdx+marker.length-1; // index of opening [
+
+  while(i<src.length){
+    const ch=src[i], prev=i>0?src[i-1]:'';
+    if(inTick){ if(ch==='`'&&prev!=='\\') inTick=false; }
+    else if(inDQ){ if(ch==='"'&&prev!=='\\') inDQ=false; }
+    else if(inSQ){ if(ch==="'"&&prev!=='\\') inSQ=false; }
+    else{
+      if(ch==='`')       inTick=true;
+      else if(ch==='"')  inDQ=true;
+      else if(ch==="'")  inSQ=true;
+      else if(ch==='['||ch==='{') depth++;
+      else if(ch===']'||ch==='}'){
+        depth--;
+        if(ch===']'&&depth===0){
+          /* i is the closing ] */
+          const afterBracket=src[i+1]===';'?i+2:i+1;
+          return src.slice(0,startIdx+marker.length-1)+
+                 JSON.stringify(newData)+';'+
+                 src.slice(afterBracket);
+        }
+      }
+    }
+    i++;
+  }
+  return src; /* fallback — no change */
+}
+
+function downloadUpdatedHTML(){
+  const toastEl=document.getElementById('toast');
+  const show=(msg,ok)=>{
+    if(toastEl){toastEl.textContent=msg;toastEl.classList.add('on');
+      setTimeout(()=>toastEl.classList.remove('on'),4000);}
+  };
+
+  show('Preparing file…');
+
+  fetch(window.location.href)
+    .then(r=>{
+      if(!r.ok) throw new Error('Fetch failed');
+      return r.text();
+    })
+    .then(src=>{
+      /* Replace the hardcoded BLOG array with current allBlogs */
+      src=_replaceJSArray(src,'BLOG',allBlogs);
+      /* Replace the hardcoded DD array with current docs */
+      src=_replaceJSArray(src,'DD',docs);
+      /* Bump localStorage keys inside the downloaded file so it
+         re-seeds cleanly from the new hardcoded arrays */
+      src=src.replace("const BK='sk_blog_v2'","const BK='sk_blog_v3'");
+      src=src.replace("const RK='sk_repo_v4'","const RK='sk_repo_v5'");
+
+      const blob=new Blob([src],{type:'text/html;charset=utf-8'});
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement('a');
+      a.href=url; a.download='index.html';
+      document.body.appendChild(a); a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      show('✓ Downloaded! Upload index.html to GitHub to publish your changes.');
+    })
+    .catch(()=>{
+      show('⚠ Open via GitHub Pages (https://) to use this feature — not from a local file.');
+    });
 }
 
 /* INIT */

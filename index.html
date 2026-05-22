@@ -1551,36 +1551,7 @@ function logoutAdmin(){
 }
 
 /* BLOG DATA */
-const BLOG=[
-  {id:1,title:"Why Every Researcher Needs Scopus in Their Toolkit",date:"April 10, 2025",cat:"Databases",
-   prev:"Scopus is the world's largest abstract and citation database. Here's how to leverage it for academic research, impact factor tracking, and literature reviews.",
-   body:`Scopus, published by Elsevier, is the world's largest abstract and citation database covering over 27,000 peer-reviewed titles from 7,000+ publishers globally.
-
-For library professionals, Scopus offers citation tracking, h-index monitoring, author profiles, institution rankings, and subject-area analytics. At ISB, I guide users through advanced Boolean searches, field codes, and citation alerts.
-
-Key tip: Use the "Secondary Documents" filter to find citing articles and trace the evolution of a research topic over time.`,tags:["Scopus","Research","Databases"]},
-  {id:2,title:"From Paper to Digital: My Digitisation Internship at IIA",date:"September 5, 2024",cat:"Experience",
-   prev:"Spending a month at Kodaikanal Solar Observatory digitising century-old astronomical records was a humbling and transformative experience.",
-   body:`The Kodaikanal Solar Observatory holds one of the world's most valuable solar observation collections dating back to 1904 — fragile photographic plates, sunspot drawings, and hand-written logbooks.
-
-My role involved scanning at 600+ DPI (TIFF masters), creating metadata records, and implementing Integrated Pest Management (IPM): nitrogen treatment, humidity control, and regular inspections.
-
-This internship gave me deep respect for the intersection of science, archival science, and information preservation.`,tags:["Digitisation","Archives","IIA"]},
-  {id:3,title:"KOHA vs Virtua: A Hands-On Comparison",date:"January 18, 2025",cat:"Library Tech",
-   prev:"Having worked with KOHA at IIM-A and Virtua at ISB, here is my practical comparison of these two powerful library automation systems.",
-   body:`KOHA (open-source ILS): free, highly customisable, backed by a global community. Handles acquisitions, cataloguing, circulation, serial management, and OPAC seamlessly. Ideal for academic and public libraries with limited budgets.
-
-Virtua (VTLS — commercial): enterprise-grade support, complex integrations, and advanced analytics. Used at ISB for business-resource management and multi-campus operations.
-
-Verdict: KOHA for flexibility and cost; Virtua for large-scale, enterprise library environments.`,tags:["KOHA","Virtua","LIS Tech"]},
-  {id:4,title:"Building Digital Information Literacy in College Students",date:"March 22, 2025",cat:"Research",
-   prev:"My PG research at National College, Trichy revealed alarming gaps in students' ability to find, evaluate, and ethically use digital information.",
-   body:`My survey of 120 students at National College Library (NCT), Tiruchirappalli found: 68% relied solely on Google for academic research; only 34% could identify a peer-reviewed article; 72% had never used Zotero or Mendeley.
-
-Using SPSS, chi-square tests confirmed statistically significant links between awareness of institutional databases and academic performance (p < 0.05).
-
-Recommendations: embed library orientations into curricula, create short-form database tutorials, and run regular information literacy workshops.`,tags:["Research","DIL","SPSS"]},
-];
+const BLOG=[{"id":1779478647794,"title":"22","date":"22 May 2026","cat":"Databases","prev":"fgdg","body":"dsgdfgfghgh","tags":[]},{"id":1,"title":"Why Every Researcher Needs Scopus in Their Toolkit","date":"April 10, 2025","cat":"Databases","prev":"Scopus is the world's largest abstract and citation database. Here's how to leverage it for academic research, impact factor tracking, and literature reviews.","body":"Scopus, published by Elsevier, is the world's largest abstract and citation database covering over 27,000 peer-reviewed titles from 7,000+ publishers globally.\n\nFor library professionals, Scopus offers citation tracking, h-index monitoring, author profiles, institution rankings, and subject-area analytics. At ISB, I guide users through advanced Boolean searches, field codes, and citation alerts.\n\nKey tip: Use the \"Secondary Documents\" filter to find citing articles and trace the evolution of a research topic over time.","tags":["Scopus","Research","Databases"]},{"id":2,"title":"From Paper to Digital: My Digitisation Internship at IIA","date":"September 5, 2024","cat":"Experience","prev":"Spending a month at Kodaikanal Solar Observatory digitising century-old astronomical records was a humbling and transformative experience.","body":"The Kodaikanal Solar Observatory holds one of the world's most valuable solar observation collections dating back to 1904 — fragile photographic plates, sunspot drawings, and hand-written logbooks.\n\nMy role involved scanning at 600+ DPI (TIFF masters), creating metadata records, and implementing Integrated Pest Management (IPM): nitrogen treatment, humidity control, and regular inspections.\n\nThis internship gave me deep respect for the intersection of science, archival science, and information preservation.","tags":["Digitisation","Archives","IIA"]},{"id":3,"title":"KOHA vs Virtua: A Hands-On Comparison","date":"January 18, 2025","cat":"Library Tech","prev":"Having worked with KOHA at IIM-A and Virtua at ISB, here is my practical comparison of these two powerful library automation systems.","body":"KOHA (open-source ILS): free, highly customisable, backed by a global community. Handles acquisitions, cataloguing, circulation, serial management, and OPAC seamlessly. Ideal for academic and public libraries with limited budgets.\n\nVirtua (VTLS — commercial): enterprise-grade support, complex integrations, and advanced analytics. Used at ISB for business-resource management and multi-campus operations.\n\nVerdict: KOHA for flexibility and cost; Virtua for large-scale, enterprise library environments.","tags":["KOHA","Virtua","LIS Tech"]},{"id":4,"title":"Building Digital Information Literacy in College Students","date":"March 22, 2025","cat":"Research","prev":"My PG research at National College, Trichy revealed alarming gaps in students' ability to find, evaluate, and ethically use digital information.","body":"My survey of 120 students at National College Library (NCT), Tiruchirappalli found: 68% relied solely on Google for academic research; only 34% could identify a peer-reviewed article; 72% had never used Zotero or Mendeley.\n\nUsing SPSS, chi-square tests confirmed statistically significant links between awareness of institutional databases and academic performance (p < 0.05).\n\nRecommendations: embed library orientations into curricula, create short-form database tutorials, and run regular information literacy workshops.","tags":["Research","DIL","SPSS"]}];
 
 /* BLOG — unified localStorage (persists add/edit/delete + survives refresh) */
 const BK='sk_blog';
@@ -1730,13 +1701,7 @@ rBlogCards('blogGrid',4);
 const RK='sk_repo';
 const TI={publication:'📄',report:'📊',note:'📝',thesis:'🎓',other:'📁'};
 const TL={publication:'Publications',thesis:'Thesis & Dissertations',report:'Reports',note:'Notes',other:'Other Documents'};
-const DD=[
-  {id:1,title:'Digital Information Literacy Competencies – A Study',desc:'Comprehensive PG dissertation survey analysing digital information literacy skills among students of National College Library, Tiruchirappalli. SPSS analysis included.',type:'thesis',year:2024,tags:['SPSS','Survey','DIL'],size:'2.8 MB',link:'#'},
-  {id:2,title:'Heber Herbal Analysis – Web Application',desc:'UG project: web page for identifying herbals found in Bishop Heber College campus, with medicinal properties documentation.',type:'other',year:2022,tags:['Web','BHC','Herbals'],size:'—',link:'#'},
-  {id:3,title:'Comparative Analysis: Business Databases',desc:'Professional guide comparing Bloomberg, Capital IQ Pro, LSEG Workspace, and Scopus for business research and competitive intelligence.',type:'report',year:2025,tags:['Bloomberg','Scopus','Capital IQ'],size:'3.3 MB',link:'#'},
-  {id:4,title:'Knowledge Organisation in Special Libraries',desc:'Notes on classification schemes and cataloguing practices: Colon Classification, DDC, and UDC comparisons with examples.',type:'note',year:2024,tags:['Cataloguing','Classification','LIS'],size:'1.1 MB',link:'#'},
-  {id:5,title:'Digitisation Standards for Archival Documents',desc:'Case study from Kodaikanal Solar Observatory: digitisation workflow, metadata standards, pest management, and quality control.',type:'report',year:2024,tags:['Digitisation','Archives','IIA'],size:'5.6 MB',link:'#'},
-];
+const DD=[{"id":1,"title":"Digital Information Literacy Competencies – A Study","desc":"Comprehensive PG dissertation survey analysing digital information literacy skills among students of National College Library, Tiruchirappalli. SPSS analysis included.","type":"thesis","year":2024,"tags":["SPSS","Survey","DIL"],"size":"2.8 MB","link":"#"},{"id":2,"title":"Heber Herbal Analysis – Web Application","desc":"UG project: web page for identifying herbals found in Bishop Heber College campus, with medicinal properties documentation.","type":"other","year":2022,"tags":["Web","BHC","Herbals"],"size":"—","link":"#"},{"id":3,"title":"Comparative Analysis: Business Databases","desc":"Professional guide comparing Bloomberg, Capital IQ Pro, LSEG Workspace, and Scopus for business research and competitive intelligence.","type":"report","year":2025,"tags":["Bloomberg","Scopus","Capital IQ"],"size":"3.3 MB","link":"#"},{"id":4,"title":"Knowledge Organisation in Special Libraries","desc":"Notes on classification schemes and cataloguing practices: Colon Classification, DDC, and UDC comparisons with examples.","type":"note","year":2024,"tags":["Cataloguing","Classification","LIS"],"size":"1.1 MB","link":"#"},{"id":5,"title":"Digitisation Standards for Archival Documents","desc":"Case study from Kodaikanal Solar Observatory: digitisation workflow, metadata standards, pest management, and quality control.","type":"report","year":2024,"tags":["Digitisation","Archives","IIA"],"size":"5.6 MB","link":"#"}];
 function lDocs(){
   try{
     for(const ok of ['sk_repo_v4','sk_repo_v3']){
@@ -1868,14 +1833,7 @@ function dDoc(id){if(!confirm('Remove this document?'))return;docs=docs.filter(d
 
 /* GALLERY */
 const GK='sk_gal';
-const DP=[
-  {id:1,cat:'work',title:'ISB Learning Resource Centre',desc:'The state-of-the-art library at Indian School of Business',date:'2024-09-01',tags:['ISB','Library'],liked:false,img:null},
-  {id:2,cat:'work',title:'Kodaikanal Solar Observatory',desc:'Digitisation project at the historic IIA observatory',date:'2024-07-15',tags:['IIA','Digitisation'],liked:false,img:null},
-  {id:3,cat:'work',title:'IIM Ahmedabad Library',desc:'Working with KOHA and cataloguing at IIM-A',date:'2023-11-20',tags:['IIM-A','KOHA'],liked:false,img:null},
-  {id:4,cat:'personal',title:'Bishop Heber College',desc:'My academic home – Bishop Heber College, Trichy',date:'2022-04-10',tags:['BHC','Education'],liked:false,img:null},
-  {id:5,cat:'work',title:'Database Research Sessions',desc:'Exploring Bloomberg and Capital IQ Pro at ISB',date:'2025-01-10',tags:['Bloomberg','ISB'],liked:false,img:null},
-  {id:6,cat:'personal',title:'NSS Community Service',desc:'National Service Scheme volunteer activities 2019–2022',date:'2021-10-05',tags:['NSS','Volunteer'],liked:false,img:null},
-];
+const DP=[{"id":1,"cat":"work","title":"ISB Learning Resource Centre","desc":"The state-of-the-art library at Indian School of Business","date":"2024-09-01","tags":["ISB","Library"],"liked":false,"img":null},{"id":2,"cat":"work","title":"Kodaikanal Solar Observatory","desc":"Digitisation project at the historic IIA observatory","date":"2024-07-15","tags":["IIA","Digitisation"],"liked":false,"img":null},{"id":3,"cat":"work","title":"IIM Ahmedabad Library","desc":"Working with KOHA and cataloguing at IIM-A","date":"2023-11-20","tags":["IIM-A","KOHA"],"liked":false,"img":null},{"id":4,"cat":"personal","title":"Bishop Heber College","desc":"My academic home – Bishop Heber College, Trichy","date":"2022-04-10","tags":["BHC","Education"],"liked":false,"img":null},{"id":5,"cat":"work","title":"Database Research Sessions","desc":"Exploring Bloomberg and Capital IQ Pro at ISB","date":"2025-01-10","tags":["Bloomberg","ISB"],"liked":false,"img":null},{"id":6,"cat":"personal","title":"NSS Community Service","desc":"National Service Scheme volunteer activities 2019–2022","date":"2021-10-05","tags":["NSS","Volunteer"],"liked":false,"img":null}];
 function lPhotos(){
   try{
     for(const ok of ['sk_gal_v4','sk_gal_v3']){

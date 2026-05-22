@@ -1583,13 +1583,28 @@ Recommendations: embed library orientations into curricula, create short-form da
 ];
 
 /* BLOG — unified localStorage (persists add/edit/delete + survives refresh) */
-const BK='sk_blog_v2';
+const BK='sk_blog';
 function lBlog(){
-  try{const s=localStorage.getItem(BK);return s?JSON.parse(s):[...BLOG];}
-  catch(e){return[...BLOG];}
+  try{
+    /* migrate data from old versioned keys if they exist */
+    for(const ok of ['sk_blog_v2','sk_blog_v1']){
+      const old=localStorage.getItem(ok);
+      if(old){try{localStorage.setItem(BK,old);localStorage.removeItem(ok);}catch(e){} break;}
+    }
+    const s=localStorage.getItem(BK);
+    return s?JSON.parse(s):[...BLOG];
+  }catch(e){return[...BLOG];}
 }
 function sBlog(data){
-  try{localStorage.setItem(BK,JSON.stringify(data));}catch(e){}
+  try{
+    localStorage.setItem(BK,JSON.stringify(data));
+  }catch(e){
+    /* QuotaExceededError — storage full */
+    if(e.name==='QuotaExceededError'||e.code===22||e.code===1014){
+      const t=document.getElementById('toast');
+      if(t){t.textContent='⚠ Browser storage full! Use "♙ Download Updated HTML" to save permanently.';t.classList.add('on');setTimeout(()=>t.classList.remove('on'),6000);}
+    }
+  }
   allBlogs=data;
 }
 let allBlogs=lBlog();
@@ -1712,7 +1727,7 @@ function openBlog(id){
 rBlogCards('blogGrid',4);
 
 /* REPOSITORY */
-const RK='sk_repo_v4';
+const RK='sk_repo';
 const TI={publication:'📄',report:'📊',note:'📝',thesis:'🎓',other:'📁'};
 const TL={publication:'Publications',thesis:'Thesis & Dissertations',report:'Reports',note:'Notes',other:'Other Documents'};
 const DD=[
@@ -1722,8 +1737,26 @@ const DD=[
   {id:4,title:'Knowledge Organisation in Special Libraries',desc:'Notes on classification schemes and cataloguing practices: Colon Classification, DDC, and UDC comparisons with examples.',type:'note',year:2024,tags:['Cataloguing','Classification','LIS'],size:'1.1 MB',link:'#'},
   {id:5,title:'Digitisation Standards for Archival Documents',desc:'Case study from Kodaikanal Solar Observatory: digitisation workflow, metadata standards, pest management, and quality control.',type:'report',year:2024,tags:['Digitisation','Archives','IIA'],size:'5.6 MB',link:'#'},
 ];
-function lDocs(){try{const s=localStorage.getItem(RK);return s?JSON.parse(s):[...DD];}catch(e){return[...DD];}}
-function sDocs(d){try{localStorage.setItem(RK,JSON.stringify(d));}catch(e){}}
+function lDocs(){
+  try{
+    for(const ok of ['sk_repo_v4','sk_repo_v3']){
+      const old=localStorage.getItem(ok);
+      if(old){try{localStorage.setItem(RK,old);localStorage.removeItem(ok);}catch(e){} break;}
+    }
+    const s=localStorage.getItem(RK);
+    return s?JSON.parse(s):[...DD];
+  }catch(e){return[...DD];}
+}
+function sDocs(d){
+  try{
+    localStorage.setItem(RK,JSON.stringify(d));
+  }catch(e){
+    if(e.name==='QuotaExceededError'||e.code===22||e.code===1014){
+      const t=document.getElementById('toast');
+      if(t){t.textContent='⚠ Browser storage full! Use "♙ Download Updated HTML" to save permanently.';t.classList.add('on');setTimeout(()=>t.classList.remove('on'),6000);}
+    }
+  }
+}
 let docs=lDocs(),rFil='all',rMType='publication';
 
 function rRepo(){
@@ -1834,7 +1867,7 @@ function addDoc(){
 function dDoc(id){if(!confirm('Remove this document?'))return;docs=docs.filter(d=>d.id!==id);sDocs(docs);rRepo();toast('Document removed.');}
 
 /* GALLERY */
-const GK='sk_gal_v4';
+const GK='sk_gal';
 const DP=[
   {id:1,cat:'work',title:'ISB Learning Resource Centre',desc:'The state-of-the-art library at Indian School of Business',date:'2024-09-01',tags:['ISB','Library'],liked:false,img:null},
   {id:2,cat:'work',title:'Kodaikanal Solar Observatory',desc:'Digitisation project at the historic IIA observatory',date:'2024-07-15',tags:['IIA','Digitisation'],liked:false,img:null},
@@ -1843,8 +1876,26 @@ const DP=[
   {id:5,cat:'work',title:'Database Research Sessions',desc:'Exploring Bloomberg and Capital IQ Pro at ISB',date:'2025-01-10',tags:['Bloomberg','ISB'],liked:false,img:null},
   {id:6,cat:'personal',title:'NSS Community Service',desc:'National Service Scheme volunteer activities 2019–2022',date:'2021-10-05',tags:['NSS','Volunteer'],liked:false,img:null},
 ];
-function lPhotos(){try{const s=localStorage.getItem(GK);return s?JSON.parse(s):[...DP];}catch(e){return[...DP];}}
-function sPhotos(p){try{localStorage.setItem(GK,JSON.stringify(p));}catch(e){}}
+function lPhotos(){
+  try{
+    for(const ok of ['sk_gal_v4','sk_gal_v3']){
+      const old=localStorage.getItem(ok);
+      if(old){try{localStorage.setItem(GK,old);localStorage.removeItem(ok);}catch(e){} break;}
+    }
+    const s=localStorage.getItem(GK);
+    return s?JSON.parse(s):[...DP];
+  }catch(e){return[...DP];}
+}
+function sPhotos(p){
+  try{
+    localStorage.setItem(GK,JSON.stringify(p));
+  }catch(e){
+    if(e.name==='QuotaExceededError'||e.code===22||e.code===1014){
+      const t=document.getElementById('toast');
+      if(t){t.textContent='⚠ Storage full — photo saved for this session only. Use "♙ Download Updated HTML" to keep it permanently.';t.classList.add('on');setTimeout(()=>t.classList.remove('on'),7000);}
+    }
+  }
+}
 let photos=lPhotos(),gFil='all',gView='grid',lbList=[],lbIdx=-1,gCat='personal',pendImg=null;
 const EMJS=['📚','🔬','🏛️','💻','📊','🎓','📖','🔭','🌿','🏫'];
 
@@ -1974,14 +2025,20 @@ function downloadUpdatedHTML(){
       return r.text();
     })
     .then(src=>{
-      /* Replace the hardcoded BLOG array with current allBlogs */
+      /* ── Replace all three hardcoded data arrays with live data ── */
       src=_replaceJSArray(src,'BLOG',allBlogs);
-      /* Replace the hardcoded DD array with current docs */
       src=_replaceJSArray(src,'DD',docs);
-      /* Bump localStorage keys inside the downloaded file so it
-         re-seeds cleanly from the new hardcoded arrays */
-      src=src.replace("const BK='sk_blog_v2'","const BK='sk_blog_v3'");
-      src=src.replace("const RK='sk_repo_v4'","const RK='sk_repo_v5'");
+      /* Gallery: strip base64 image blobs to keep file size small;
+         photos will show placeholder emoji after a fresh browser visit.
+         All metadata (title, desc, tags, date, liked) is preserved. */
+      const dpExport=photos.map(({img,...rest})=>({...rest,img:null}));
+      src=_replaceJSArray(src,'DP',dpExport);
+
+      /* ── STABLE KEYS — intentionally NOT bumping sk_blog/sk_repo/sk_gal ──
+         Same key means:
+           • Returning visitor: keeps their localStorage additions intact
+           • New visitor / new browser: sees the freshly baked hardcoded arrays
+         This is the correct behaviour and prevents the 'data gone after push' bug. ── */
 
       const blob=new Blob([src],{type:'text/html;charset=utf-8'});
       const url=URL.createObjectURL(blob);
@@ -1990,7 +2047,7 @@ function downloadUpdatedHTML(){
       document.body.appendChild(a); a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-      show('✓ Downloaded! Upload index.html to GitHub to publish your changes.');
+      show('✓ Downloaded! Upload index.html to GitHub — your changes will be visible to everyone.');
     })
     .catch(()=>{
       show('⚠ Open via GitHub Pages (https://) to use this feature — not from a local file.');
